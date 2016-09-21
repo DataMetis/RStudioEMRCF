@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Template to create an EMR Cluster with RStudio installed on the master node
+
+Resources:
+  AWSMeetupEMRClusterYAML:
+    Type: "AWS::EMR::Cluster"  #I am creating a EMR Cluster but mostly showing off YAML's inline commenting feature
+    Properties:
+      BootstrapActions:
+        -
+          Name: "Install RStudio"
+          ScriptBootstrapAction:
+            Path: "s3://datametiswebsite/install-rstudio-server.sh"  #This is where the magic happens :-)
+
+      Applications:
+       -  Name: "Hadoop"
+       -  Name:  "Hive"
+       -  Name:  "Hue"
+       -  Name:  "Spark"
+       -  Name:  "Zeppelin"
+      Instances:
+        MasterInstanceGroup:
+          InstanceCount: 1
+          InstanceType: "m3.xlarge"
+          Market: "ON_DEMAND"
+          Name: "Master"
+        CoreInstanceGroup:
+          InstanceCount: 2
+          InstanceType: "m3.xlarge"
+          Market: "ON_DEMAND"
+          Name: "Core"
+        TerminationProtected: false
+        Ec2KeyName: "datametis1"  #change it your EC2 key
+      Name: "AWSMeetupEMRClusterYAML"
+      LogUri: "s3://aws-logs-801595289420-us-east-1/elasticmapreduce/"
+      JobFlowRole: "EMR_EC2_DefaultRole"
+      ServiceRole: "EMR_DefaultRole"
+      ReleaseLabel: "emr-5.0.0"
+      Tags:
+        -
+          Key: "Name"
+          Value: "Sample EMR Cluster"
+
+Outputs:
+  RStudioURL:
+    Description : "Must SSH into the Master Node before connecting"
+    Value : !Join  [ "", ["http://", !GetAtt ["AWSMeetupEMRClusterYAML", "MasterPublicDNS"],":8787"]]
+     
+      
