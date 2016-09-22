@@ -23,6 +23,9 @@
     <Content Include="aws_emr_cf.yaml">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="diabetes.scala">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="install-rstudio-server.sh">
       <SubType>Content</SubType>
     </Content>
